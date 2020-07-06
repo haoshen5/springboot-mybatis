@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!-- 插值表达式，类似于EL -->
+[[${hello}]]
+<p th:text="${hello}">xxx</p>
+
+<!-- html原生属性不能赋值Thymeleaf表达式
+         @{}  构建一个映射路径,自动增加上下文路径  (action = "${pageContext.request.contextPath}/demo")
+-->
+<form id="login-form" th:action="@{/demo1}" method="post">
+       <button>提交</button>
+</form>
+
+<table border="1" >
+    <tr>
+        <td>下标</td>
+        <td>用户名</td>
+        <td>密码</td>
+        <td>姓名</td>
+    </tr>
+    <!-- 从请求域中获取属性，不需要增加任何前缀，和EL表达式有区别。 ${requestScope.users} -->
+    <tr th:each="user,status:${users}">
+        <td>[[${status.count}]]</td>
+        <td th:text="${user.username}">用户名</td>
+        <td th:text="${user.password}">密码</td>
+        <td th:text="${user.name}">姓名</td>
+    </tr>
+
+    <div>
+        获取Key=NO的值：<span th:text="${dataMap.No}"></span><br/>
+        获取key=address的值：<span th:text="${dataMap.address}"></span> <br/>
+    </div>
+
+    <div th:each="entry:${dataMap}">
+        <span th:text="${entry.key}"></span>
+        <span th:text="${entry.value}"></span>
+    </div>
+
+    <div th:each="nm,nmStat:${names}">
+        <span th:text="${nmStat.count}"></span>
+        <span th:text="${nm}"></span>
+    </div>
+
+    <div>
+        <span th:text="${#dates.format(now,'yyyy-MM-dd HH:mm:ss')}"></span>
+    </div>
+
+    <!--  ${name}  表示从请求域获取数据，没有前缀。默认前缀是request，必须省略。
+          ${session.uname}   表示从session域中获取数据 session表示session域
+          ${application.uname}  表示从application域获取数据
+          ${#session.uname}  #session 表示HttpSession对象本身
+    -->
+    <div th:text="${session.uname}"></div>
+
+    <!-- if:th：unless表示条件不成立 ，输出数据 -->
+    <div>
+        <span th:if="${(age>=18)}">终于长大了！</span>
+        <span th:unless="${age<18}">成年人</span>
+    </div>
+
+    <!-- 根据footer进行视图解析，拼前缀，拼后缀，找到页面，从页面中找到代码片段，进行包含。 -->
+    <div th:include="footer::copy"></div>
+
+</table> 
+
+
+
+</body>
+</html>
